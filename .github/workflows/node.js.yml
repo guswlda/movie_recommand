@@ -1,13 +1,13 @@
-name: Node.js CI
+name: Node.js CI/CD
 
 on:
   push:
     branches: ['main']
-
+    # branch - main
 jobs:
   build:
     runs-on: self-hosted
-
+    # cmd enter로 install 시 self-hosted
     strategy:
       matrix:
         node-version: [18.x]
@@ -15,31 +15,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-
       - run: npm ci
-
-      # Set up Python environment
-      - name: Set up Python 3.12.6
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12.6'
-
-      # Create and activate Python virtual environment
-      - name: Set up Python virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-
-      # Install Python dependencies (if you have a requirements.txt file)
-      - name: Install Python dependencies
-        run: |
-          source venv/bin/activate
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       # - run: pm2 restart BackendAPI
