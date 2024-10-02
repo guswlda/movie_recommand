@@ -1,7 +1,9 @@
-name: Node.js CI
+name: Node.js & Python CI
 
 on:
   push:
+    branches: ['main']
+  pull_request:
     branches: ['main']
 
 jobs:
@@ -14,32 +16,48 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v4
+      # 1. Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+      # 2. Set up Node.js environment
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - run: npm ci
-
-      # Set up Python environment
-      - name: Set up Python 3.12.6
+      # 3. Install Node.js dependencies
+      - name: Install Node.js dependencies
+        run: npm ci
+        
+      # 5. Set up Python environment
+      - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12.6'
+          python-version: '3.11'
 
-      # Create and activate Python virtual environment
-      - name: Set up Python virtual environment
+      # 6. Create Python virtual environment and install dependencies
+      - name: Create Python virtual environment and install dependencies
+        shell: bash
         run: |
           python -m venv venv
           source venv/bin/activate
+          pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            # Install specific compatible versions to avoid conflicts
+            pip install numpy<3 pandas<3 scikit-learn<1.6 scipy<1.15
+            pip install -r requirements.txt
+          fi
 
-      # Install Python dependencies (if you have a requirements.txt file)
-      - name: Install Python dependencies
+      # Optional: Run your tests (Node.js tests or Python tests)
+      - name: Run Node.js tests
+        run: npm test
+
+      - name: Run Python tests
+        shell: bash
         run: |
           source venv/bin/activate
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      # - run: pm2 restart BackendAPI
+          if [ -f requirements.txt ]; then
+            pytest
+          fi
