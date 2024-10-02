@@ -35,14 +35,11 @@ jobs:
         with:
           python-version: '3.11'
 
-      # Create Python virtual environment
-      - name: Create Python virtual environment
-        run: python -m venv venv
-
-      # Install Python dependencies
-      - name: Install Python dependencies
+      # Create Python virtual environment and install dependencies in one script
+      - name: Create Python virtual environment and install dependencies
         shell: bash
         run: |
+          python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
           if [ -f requirements.txt ]; then
