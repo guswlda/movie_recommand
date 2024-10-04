@@ -25,9 +25,7 @@ function executePythonScript(scriptName, args, res) {
   // );
 
   // deploy pythonPath
-  // const pythonPath = path.join(__dirname, 'venv', 'bin', 'python3');
-  const pythonPath =
-    '/home/ubuntu/actions-runner/_work/movie_recommand/movie_recommand/venv/bin/python3'; // 실제 절대 경로 사용
+  const pythonPath = path.join(__dirname, 'venv', 'bin', 'python3');
 
   const result = spawn(pythonPath, [scriptPath, ...args]);
 
