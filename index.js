@@ -25,7 +25,16 @@ function executePythonScript(scriptName, args, res) {
   // );
 
   // deploy pythonPath
-  const pythonPath = path.join(__dirname, 'venv', 'bin', 'python3');
+  // const pythonPath = path.join('__dirname', 'venv', 'bin', 'python3');
+
+  // miniconda접근 환경
+  const pythonPath = path.join(
+    '/home/ubuntu/miniconda',
+    'envs',
+    'myenv',
+    'bin',
+    'python3'
+  );
 
   const result = spawn(pythonPath, [scriptPath, ...args]);
 
