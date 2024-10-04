@@ -3,11 +3,22 @@ const cors = require('cors');
 const path = require('path');
 const spawn = require('child_process').spawn;
 const PORT = 8080;
+require('dotenv').config();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// dev
+const isDevelopment = () => {
+  return process.env.NODE_ENV == 'development';
+};
+
+// env 있을 경우 C, env 없는 경우 miniconda
+const pythonExePath = isDevelopment()
+  ? path.join('C:', 'conda', 'envs', 'recom_env', 'python.exe')
+  : path.join('/home/ubuntu/miniconda', 'envs', 'myenv', 'bin', 'python3');
 
 app.get('/', (req, res) => {
   res.send('Hello From node server!');
@@ -28,15 +39,15 @@ function executePythonScript(scriptName, args, res) {
   // const pythonPath = path.join('__dirname', 'venv', 'bin', 'python3');
 
   // miniconda접근 환경
-  const pythonPath = path.join(
-    '/home/ubuntu/miniconda',
-    'envs',
-    'myenv',
-    'bin',
-    'python3'
-  );
+  // const pythonPath = path.join(
+  //   '/home/ubuntu/miniconda',
+  //   'envs',
+  //   'myenv',
+  //   'bin',
+  //   'python3'
+  // );
 
-  const result = spawn(pythonPath, [scriptPath, ...args]);
+  const result = spawn(pythonExePath, [scriptPath, ...args]);
 
   let responseData = '';
 
